@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -6,13 +8,16 @@
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: auto; /* 이미지 높이를 자동으로 설정하여 왜곡 방지 */
+  max-height: 6em; /* 이미지의 최대 높이를 설정 */
+  padding: 0; /* padding 제거 */
   will-change: filter;
   transition: filter 300ms;
+  object-fit: contain; /* 이미지 비율 유지 */
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
