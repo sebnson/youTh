@@ -1,6 +1,7 @@
 package com.example.demo.controller.board;
 
 import com.example.demo.controller.board.dto.BoardCreateRequestDto;
+import com.example.demo.controller.board.dto.BoardLikeRequestDto;
 import com.example.demo.controller.board.dto.BoardResponseDto;
 import com.example.demo.service.board.IBoardService;
 import java.time.LocalDateTime;
@@ -89,6 +90,15 @@ public class BoardController {
     public ResponseEntity<Void> deleteBoard(@PathVariable Integer id) {
         boardService.deleteBoard(id);
         return ResponseEntity
-            .status(HttpStatus.OK).body(null);
+            .status(HttpStatus.OK)
+            .body(null);
+    }
+
+    @PostMapping("/{id}/likes")
+    public ResponseEntity<Integer> likeBoard(@PathVariable Integer id, @RequestBody BoardLikeRequestDto request) {
+        Integer likes = boardService.likeBoard(request.getUserId(), id);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(likes);
     }
 }

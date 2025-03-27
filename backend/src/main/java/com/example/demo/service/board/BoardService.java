@@ -3,10 +3,12 @@ package com.example.demo.service.board;
 import com.example.demo.controller.board.dto.BoardCreateRequestDto;
 import com.example.demo.controller.board.dto.BoardResponseDto;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.BoardLike;
 import com.example.demo.entity.User;
 import com.example.demo.exception.CustomException;
 import com.example.demo.exception.ExceptionType;
 import com.example.demo.repository.board.BoardRepository;
+import com.example.demo.repository.boardLike.BoardLikeRepository;
 import com.example.demo.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 public class BoardService implements IBoardService {
     BoardRepository boardRepository;
     UserRepository userRepository;
+    BoardLikeRepository boardLikeRepository;
 
     @Transactional
     public BoardResponseDto save(BoardCreateRequestDto request) {
@@ -73,5 +76,23 @@ public class BoardService implements IBoardService {
         boardRepository.deleteById(id);
     }
 
-    ;
+    public Integer likeBoard(Integer userId, Integer boardId) {
+        Board board = boardRepository.findById(boardId)
+            .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        BoardLike boardLike = BoardLike.builder()
+            .user(user)
+            .board(board)
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        board.getLikes().add(boardLike);
+        user.getBoardLikes().add(boardLike);
+
+        boardLikeRepository.save(boardLike);
+
+        return board.getLikes().size();
+    }
 }
