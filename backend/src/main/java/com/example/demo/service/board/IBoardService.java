@@ -10,4 +10,6 @@ public interface IBoardService {
     List<BoardResponseDto> getAllBoards();
 
     List<BoardResponseDto> getUserBoards(Integer userId);
+
+    BoardResponseDto updateBoard(Integer id, BoardCreateRequestDto request);
 }
