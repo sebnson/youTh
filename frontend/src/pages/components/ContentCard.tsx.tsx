@@ -62,6 +62,9 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
               </p>
               <p className="font-['Pretendard'] text-sm text-gray-500">
                 {formatDate(item.createdAt)}
+                {item.modifiedAt &&
+                  item.modifiedAt !== item.createdAt &&
+                  ' (수정됨)'}
               </p>
             </div>
           </div>
@@ -92,6 +95,17 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
           <p className="font-['Pretendard'] text-base whitespace-pre-wrap">
             {item.content}
           </p>
+
+          {/* 게시글 이미지가 있는 경우 표시 */}
+          {item.image && (
+            <div className="mt-3">
+              <img
+                src={item.image}
+                alt="Post attachment"
+                className="max-h-96 rounded-lg object-contain border border-gray-200"
+              />
+            </div>
+          )}
         </div>
 
         {/* 좋아요 및 댓글 수 */}

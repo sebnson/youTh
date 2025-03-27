@@ -91,11 +91,9 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onOpenChange }) => {
             <img src={defaultProfile} alt="profile" />
           </div>
           <div className="mt-1 ml-1.5">
-            <p className="text-lg font-['Pretendard'] font-bold">
-              {username || 'username'}
-            </p>
+            <p className="text-lg font-['Pretendard'] font-bold">{username}</p>
             <div className="-mt-2 text-[14px] text-[#4d4d4d] font-['Pretendard']">
-              <p>{userNickname || 'nickname'}</p>
+              <p>{userNickname}</p>
             </div>
           </div>
         </div>
@@ -105,7 +103,7 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onOpenChange }) => {
             placeholder="새로운 소식이 있나요?"
             value={postContent}
             onChange={handleContentChange}
-            className="w-full min-h-[100px] resize-none p-3 rounded-md bg-gray-100 font-['Pretendard']"
+            className="w-full min-h-[200px] resize-none p-3 rounded-md bg-gray-100 font-['Pretendard']"
           />
 
           {selectedImage && (
