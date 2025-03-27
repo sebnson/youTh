@@ -12,4 +12,6 @@ public interface IBoardService {
     List<BoardResponseDto> getUserBoards(Integer userId);
 
     BoardResponseDto updateBoard(Integer id, BoardCreateRequestDto request);
+
+    void deleteBoard(Integer id);
 }

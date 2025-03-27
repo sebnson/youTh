@@ -84,30 +84,11 @@ public class BoardController {
             .body(response);
     }
 
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<Map<String, Object>> updateBoard(@PathVariable Long id,
-//        @RequestBody Map<String, Object> request) {
-//        if (request.get("content") == null || request.get("content").toString().length() > 500) {
-//            return ResponseEntity.badRequest().body(Map.of("message", "내용은 500자 이하여야 합니다."));
-//        }
-//
-//        Map<String, Object> response = Map.of(
-//            "id", id,
-//            "content", request.get("content"),
-//            "useYn", true,
-//            "createdAt", LocalDateTime.now(),
-//            "modifiedAt", LocalDateTime.now(),
-//            "userId", 1,
-//            "likes", 1,
-//            "comments", 1
-//        );
-//
-//        return ResponseEntity.ok(response);
-//    }
-
     // 글 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteBoard(@PathVariable Long id) {
-        return ResponseEntity.ok(Map.of("message", "글 삭제 완료"));
+    public ResponseEntity<Void> deleteBoard(@PathVariable Integer id) {
+        boardService.deleteBoard(id);
+        return ResponseEntity
+            .status(HttpStatus.OK).body(null);
     }
 }
