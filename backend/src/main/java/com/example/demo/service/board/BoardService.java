@@ -6,6 +6,7 @@ import com.example.demo.entity.Board;
 import com.example.demo.entity.User;
 import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.repository.user.UserRepository;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,5 +35,10 @@ public class BoardService implements IBoardService {
         return BoardResponseDto.from(created);
     }
 
-    ;
+    public List<BoardResponseDto> getAllBoards() {
+        List<Board> boards = boardRepository.findAll();
+        return boards.stream()
+            .map(BoardResponseDto::from)
+            .toList();
+    }
 }

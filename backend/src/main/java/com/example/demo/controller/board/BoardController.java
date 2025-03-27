@@ -41,31 +41,11 @@ public class BoardController {
 
     // 전체 글 보기
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getAllBoards() {
-        List<Map<String, Object>> response = List.of(
-            Map.of(
-                "id", 1,
-                "content", "게시글 내용",
-                "createdAt", LocalDateTime.now(),
-                "modifiedAt", LocalDateTime.now(),
-                "userId", 1,
-                "nickname", "김북보",
-                "likes", 12,
-                "comments", 1
-            ),
-            Map.of(
-                "id", 2,
-                "content", "또 다른 게시글",
-                "createdAt", LocalDateTime.now(),
-                "modifiedAt", LocalDateTime.now(),
-                "userId", 2,
-                "nickname", "사용자2",
-                "likes", 8,
-                "comments", 3
-            )
-        );
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<BoardResponseDto>> getAllBoards() {
+        List<BoardResponseDto> response = boardService.getAllBoards();
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(response);
     }
 
     // 글 하나 보기
