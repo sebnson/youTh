@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import ContentCard from '@/pages/components/ContentCard.tsx';
+import EditModal from '@/pages/components/EditModal';
 import { ContentItem } from '@/types/content';
 
 const MainFeed = () => {
@@ -9,6 +10,10 @@ const MainFeed = () => {
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
   const pageSize = 5; // Number of items to load per page
+
+  // Add state for edit modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState<number | null>(null);
 
   // Function to fetch contents with pagination
   const fetchContents = useCallback(async (pageNum: number) => {
@@ -64,6 +69,7 @@ const MainFeed = () => {
         },
         likes: 12,
         comments: 1,
+        image: null, // Add image field to match EditModal expectations
       },
       {
         id: 2,
@@ -77,6 +83,7 @@ const MainFeed = () => {
         },
         likes: 8,
         comments: 4,
+        image: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD...', // Example with image
       },
       {
         id: 3,
@@ -89,6 +96,7 @@ const MainFeed = () => {
         },
         likes: 8,
         comments: 3,
+        image: null,
       },
       {
         id: 4,
@@ -101,6 +109,7 @@ const MainFeed = () => {
         },
         likes: 15,
         comments: 4,
+        image: null,
       },
       {
         id: 5,
@@ -113,6 +122,7 @@ const MainFeed = () => {
         },
         likes: 30,
         comments: 6,
+        image: null,
       },
       {
         id: 6,
@@ -125,6 +135,7 @@ const MainFeed = () => {
         },
         likes: 12,
         comments: 7,
+        image: null,
       },
       {
         id: 7,
@@ -137,6 +148,7 @@ const MainFeed = () => {
         },
         likes: 22,
         comments: 3,
+        image: null,
       },
       {
         id: 8,
@@ -149,6 +161,7 @@ const MainFeed = () => {
         },
         likes: 18,
         comments: 2,
+        image: null,
       },
       {
         id: 9,
@@ -161,6 +174,7 @@ const MainFeed = () => {
         },
         likes: 35,
         comments: 4,
+        image: null,
       },
       {
         id: 10,
@@ -173,6 +187,7 @@ const MainFeed = () => {
         },
         likes: 27,
         comments: 8,
+        image: null,
       },
       {
         id: 11,
@@ -185,6 +200,7 @@ const MainFeed = () => {
         },
         likes: 19,
         comments: 3,
+        image: null,
       },
       {
         id: 12,
@@ -197,6 +213,7 @@ const MainFeed = () => {
         },
         likes: 24,
         comments: 6,
+        image: null,
       },
       {
         id: 13,
@@ -209,6 +226,7 @@ const MainFeed = () => {
         },
         likes: 20,
         comments: 5,
+        image: null,
       },
       {
         id: 14,
@@ -221,6 +239,7 @@ const MainFeed = () => {
         },
         likes: 31,
         comments: 10,
+        image: null,
       },
       {
         id: 15,
@@ -233,6 +252,7 @@ const MainFeed = () => {
         },
         likes: 16,
         comments: 2,
+        image: null,
       },
       {
         id: 16,
@@ -245,6 +265,7 @@ const MainFeed = () => {
         },
         likes: 22,
         comments: 7,
+        image: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD...', // Another example with image
       },
       {
         id: 17,
@@ -257,6 +278,7 @@ const MainFeed = () => {
         },
         likes: 28,
         comments: 5,
+        image: null,
       },
       {
         id: 18,
@@ -269,6 +291,7 @@ const MainFeed = () => {
         },
         likes: 14,
         comments: 3,
+        image: null,
       },
       {
         id: 19,
@@ -281,11 +304,11 @@ const MainFeed = () => {
         },
         likes: 14,
         comments: 3,
+        image: null,
       },
     ] as ContentItem[];
   };
 
-  // Set up intersection observer for infinite scroll
   const lastContentElementRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (loading) return;
@@ -344,11 +367,10 @@ const MainFeed = () => {
     fetchContents(page);
   }, [page, fetchContents]);
 
+  // Updated edit handler to open the edit modal
   const handleEdit = (id: number) => {
-    alert(`Editing post with ID: ${id}`);
-    // edit modal 띄우기
-    // post data 가져오기 (api 연결)
-    // edit 후 save changes (api 연결)
+    setCurrentPostId(id);
+    setIsEditModalOpen(true);
   };
 
   const handleDelete = (id: number) => {
@@ -402,6 +424,21 @@ const MainFeed = () => {
           </div>
         )}
       </div>
+
+      {currentPostId !== null && (
+        <EditModal
+          isOpen={isEditModalOpen}
+          onOpenChange={(open) => {
+            setIsEditModalOpen(open);
+            if (!open && currentPostId) {
+              // fetch just the updated post
+              fetchContents(1); // Reset to page 1 and refresh
+              setCurrentPostId(null);
+            }
+          }}
+          postId={currentPostId}
+        />
+      )}
     </div>
   );
 };

@@ -1,14 +1,13 @@
-export interface Author {
-  id: number;
-  nickname: string;
-}
-
 export interface ContentItem {
   id: number;
   content: string;
   createdAt: string;
-  modifiedAt: string;
-  author: Author;
+  modifiedAt?: string;
+  author: {
+    id: number;
+    nickname: string;
+  };
   likes: number;
   comments: number;
+  image: string | null; // Added to support image attachments in posts
 }
