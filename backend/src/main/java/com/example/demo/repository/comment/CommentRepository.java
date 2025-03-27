@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
   List<Comment> findByBoardId(Integer boardId);
+  Comment save(Comment entity);
 
 }

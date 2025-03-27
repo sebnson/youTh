@@ -1,5 +1,6 @@
 package com.example.demo.controller.comment;
 
+import com.example.demo.controller.comment.dto.CommentRequestDto;
 import com.example.demo.controller.comment.dto.CommentResponseDto;
 import com.example.demo.service.comment.CommentService;
 import lombok.AccessLevel;
@@ -26,21 +27,9 @@ public class CommentController {
 
   // 한 게시물의 한 댓글 쓰기
   @PostMapping
-  public ResponseEntity<?> createComment(@PathVariable Long boardId, @RequestBody Map<String, String> request) {
-    String content = request.get("content");
-    if (content == null || content.length() > 100) {
-      return ResponseEntity.badRequest().body(Map.of("message", "내용은 100자 이하여야 합니다."));
-    }
-
-    Map<String, Object> response = Map.of(
-        "id", 123,
-        "userId", 1,
-        "nickname", "닉네임",
-        "createdAt", LocalDateTime.now().toString(),
-        "content", content
-    );
-
-    return ResponseEntity.status(201).body(response);
+  public ResponseEntity<CommentResponseDto> createComment(@PathVariable Integer boardId, @RequestBody CommentRequestDto request) {
+    CommentResponseDto responseDto = commentService.createComment(boardId,request);
+    return ResponseEntity.ok(responseDto);
   }
 
   // 한 댓글 수정
