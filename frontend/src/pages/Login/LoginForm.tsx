@@ -14,6 +14,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { loginUser } from '@/pages/api/LoginApi';
+import { useNavigate } from 'react-router-dom';
 
 const loginFormSchema = z.object({
   email: z
@@ -32,6 +34,7 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const navigate = useNavigate(); // React Router가 있다고 가정
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -46,11 +49,37 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      // API 호출 시뮬레이션 (실제 구현 시 대체)
-      console.log('로그인 데이터:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert(`로그인 성공!\n이메일: ${data.email}`);
+      // API 호출
+      const response = await loginUser({
+        email: data.email,
+        password: data.password,
+        rememberMe: data.rememberMe,
+      });
+
+      // 로그인 성공 처리
+      alert(
+        JSON.stringify({
+          title: '로그인 성공',
+          description: `${response.nickname}님 환영합니다!`,
+          variant: 'default',
+        }),
+      );
+
+      // 메인 페이지 또는 이전 페이지로 이동 (라우터가 있다고 가정)
+      navigate('/');
     } catch (error) {
+      // 에러 처리
+      const errorMessage =
+        error instanceof Error ? error.message : '로그인에 실패했습니다.';
+
+      alert(
+        JSON.stringify({
+          title: '로그인 실패',
+          description: errorMessage,
+          variant: 'destructive',
+        }),
+      );
+
       console.error('로그인 실패:', error);
     } finally {
       setIsLoading(false);
