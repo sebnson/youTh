@@ -48,6 +48,15 @@ public class BoardController {
             .body(response);
     }
 
+    // 사용자 작성 글 목록 보기
+    @GetMapping("by-user/{userId}")
+    public ResponseEntity<List<BoardResponseDto>> getUserBoards(@PathVariable Integer userId) {
+        List<BoardResponseDto> response = boardService.getUserBoards(userId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(response);
+    }
+
     // 글 하나 보기
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getBoard(@PathVariable Long id) {

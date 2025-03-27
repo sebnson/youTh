@@ -19,11 +19,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @Setter
 @Builder
+@Where(clause = "use_yn = true")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
