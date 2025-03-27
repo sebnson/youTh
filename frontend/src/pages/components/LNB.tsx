@@ -1,5 +1,6 @@
-import { Heart, House, Plus, UserRound } from 'lucide-react';
+import { Heart, House, UserRound } from 'lucide-react';
 import iconImage from '../../assets/icon.svg';
+import PostModal from '@/pages/components/PostModal';
 
 const LNB = () => {
   return (
@@ -14,10 +15,10 @@ const LNB = () => {
         <div className="flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl w-16 h-16 text-[#B8B8B8] hover:text-[#111111] nav-footer-rounded">
           <House size={24} />
         </div>
-        <div className="flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl w-16 h-16 text-[#B8B8B8] hover:text-[#111111] nav-footer-rounded">
-          <Plus size={24} />
-        </div>
-        <div className="flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl w-16 h-16 text-[#B8B8B8] hover:text-[#111111] nav-footer-rounded">
+
+        <PostModal />
+
+        <div className="relative w-16 h-16 flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl text-[#B8B8B8] hover:text-[#111111]">
           <Heart size={24} />
         </div>
         <div className="flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl w-16 h-16 text-[#B8B8B8] hover:text-[#111111] nav-footer-rounded">
