@@ -3,6 +3,7 @@ import LNB from './pages/components/LNB';
 import CardLayout from './pages/components/CardLayout';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import MainFeed from '@/pages/MainFeed/MainFeed';
 
 const App = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -26,6 +27,7 @@ const App = () => {
       <LNB />
       <CardLayout>
         <Outlet />
+        <MainFeed />
       </CardLayout>
     </>
   );
