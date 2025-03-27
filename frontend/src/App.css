@@ -39,14 +39,17 @@
 
   .nav-header-container {
     width: 100%;
-    display: flex;
+    display: grid;
+    position: fixed;
     justify-content: center;
+    top: 0;
+    background-color: #ffffff;
   }
 
   nav {
+    display: grid;
+    position: fixed;
     width: 100%;
-    flex-direction: column;
-    background-color: #ffffff;
   }
 }
 
