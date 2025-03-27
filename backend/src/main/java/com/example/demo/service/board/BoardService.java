@@ -4,6 +4,8 @@ import com.example.demo.controller.board.dto.BoardCreateRequestDto;
 import com.example.demo.controller.board.dto.BoardResponseDto;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.User;
+import com.example.demo.exception.CustomException;
+import com.example.demo.exception.ExceptionType;
 import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.repository.user.UserRepository;
 import java.util.List;
@@ -24,7 +26,8 @@ public class BoardService implements IBoardService {
     public BoardResponseDto save(BoardCreateRequestDto request) {
         log.info("들어온 req: {}", request.getContent());
 
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("사용자 없음"));
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new CustomException("사용자 없음",
+            ExceptionType.USER_NOT_FOUND));
 
         Board entity = request.toEntity();
         entity.setUser(user);
