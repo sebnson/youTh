@@ -1,5 +1,10 @@
 package com.example.demo.controller.comment;
 
+import com.example.demo.controller.comment.dto.CommentResponseDto;
+import com.example.demo.service.comment.CommentService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,41 +14,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/boards/{boardId}/comments")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CommentController {
-  // 한 게시물의 전체 댓글 보기
+  CommentService commentService;
   @GetMapping
-  public ResponseEntity<?> getComments(@PathVariable Long boardId) {
-    if (boardId == null) {
-      return ResponseEntity.status(401).body(Map.of("message", "잘못된 요청입니다."));
-    }
-
-    Map<String, Object> response = Map.of(
-        "boardId", boardId,
-        "comments", List.of(
-            Map.of(
-                "id", 1,
-                "content", "좋은 글이네요!",
-                "useYn", true,
-                "createdAt", LocalDateTime.now().toString(),
-                "modifiedAt", LocalDateTime.now().toString(),
-                "userId", 1,
-                "nickname", "길동이",
-                "likes", 3
-            ),
-            Map.of(
-                "id", 2,
-                "content", "동감합니다!",
-                "useYn", true,
-                "createdAt", LocalDateTime.now().toString(),
-                "modifiedAt", LocalDateTime.now().toString(),
-                "userId", 2,
-                "nickname", "코딩왕",
-                "likes", 5
-            )
-        )
-    );
-
-    return ResponseEntity.ok(response);
+  public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Integer boardId) {
+    List<CommentResponseDto> responseDtos = commentService.getAllComments(boardId);
+    return ResponseEntity.ok(responseDtos);
   }
 
   // 한 게시물의 한 댓글 쓰기
