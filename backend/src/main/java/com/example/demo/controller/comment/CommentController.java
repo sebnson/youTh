@@ -34,20 +34,11 @@ public class CommentController {
 
   // 한 댓글 수정
   @PatchMapping("/{commentId}")
-  public ResponseEntity<?> updateComment(@PathVariable Long boardId, @PathVariable Long commentId, @RequestBody Map<String, String> request) {
-    String content = request.get("content");
-    if (content == null || content.length() > 100) {
-      return ResponseEntity.badRequest().body(Map.of("message", "내용은 100자 이하여야 합니다."));
-    }
+  public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long boardId, @PathVariable Integer commentId, @RequestBody CommentRequestDto request) {
 
-    Map<String, Object> response = Map.of(
-        "id", commentId,
-        "nickname", "닉네임",
-        "modifiedAt", LocalDateTime.now().toString(),
-        "content", content
-    );
+    CommentResponseDto responseDto = commentService.updateComment(commentId,request);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).body(responseDto);
   }
 
   // 한 댓글 삭제

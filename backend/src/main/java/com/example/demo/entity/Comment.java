@@ -25,11 +25,14 @@ public class Comment {
     Integer id;
 
     @Column(length = 100, nullable = false)
+    @Setter
     String content;
 
     @Column(nullable = false)
     boolean useYn = true;
+    @Setter
     LocalDateTime createdAt;
+    @Setter
     LocalDateTime modifiedAt;
 
     @ManyToOne

@@ -24,7 +24,7 @@ public class CommentRequestDto {
   Integer userId;
   String content;
   public Comment toEntity(){
-    return Comment.builder().content(content).createdAt(LocalDateTime.now()).build();
+    return Comment.builder().content(content).build();
   }
 
 }
