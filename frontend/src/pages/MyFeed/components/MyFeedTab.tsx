@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { getMyFeed, MyFeedResponse } from '@/api/GetApi';
+import ContentCard from '@/pages/components/ContentCard.tsx';
+import { ContentItem } from '@/types/content';
+import { useEffect, useState } from 'react';
 
 interface ITabMenuProps {
   id: number;
@@ -16,8 +19,26 @@ const tabMenu: ITabMenuProps[] = [
   },
 ];
 
+const getMyFeedData = async (userId: number) => {
+  const result = await getMyFeed(userId);
+  console.log(result);
+  if (!result) {
+    return null;
+  }
+
+  return result;
+};
+
 const MyFeedTab = () => {
   const [activeTab, setActiveTab] = useState(1);
+  const [myFeedData, setmyFeedData] = useState<
+    MyFeedResponse | ContentItem | undefined
+  >();
+
+  useEffect(() => {
+    const response = getMyFeedData(1);
+    setmyFeedData(response);
+  }, [activeTab]);
 
   return (
     <div className="w-full">
@@ -31,13 +52,13 @@ const MyFeedTab = () => {
             {item.menu}
           </div>
         ))}
-        <div className='px-4 py-4'>
+        <div className="px-4 py-4">
           {activeTab === 1 && (
-            <div className="animate-fadeIn">내 피드입니다</div>
+            <ContentCard key={myFeedData?.id} item={myFeedData} />
           )}
 
           {activeTab === 2 && (
-            <div className="animate-fadeIn">내가 좋아한 피드입니다</div>
+            <ContentCard key={myFeedData?.id} item={myFeedData} />
           )}
         </div>
       </div>

@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { ContentItem } from '@/types/content';
 import { useUserStore } from '@/store/userStore';
 import defaultProfile from '../../assets/defaultProfile.svg';
+import { MyFeedResponse } from '@/api/GetApi';
 
 interface ContentCardProps {
-  item: ContentItem;
+  item: ContentItem | MyFeedResponse | undefined;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 }
@@ -13,7 +14,7 @@ interface ContentCardProps {
 const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
   const { userId } = useUserStore();
   const [isLiked, setIsLiked] = useState(false);
-  const isAuthor = userId === item.author.id;
+  const isAuthor = userId === item?.id;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -33,13 +34,13 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
 
   const handleEdit = () => {
     if (onEdit) {
-      onEdit(item.id);
+      onEdit(item?.id);
     }
   };
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(item.id);
+      onDelete(item?.id);
     }
   };
 
@@ -58,12 +59,12 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
             </div>
             <div className="ml-3 flex flex-col">
               <p className="font-['Pretendard'] font-bold text-base">
-                {item.author.nickname}
+                {item?.nickname}
               </p>
               <p className="font-['Pretendard'] text-sm text-gray-500">
-                {formatDate(item.createdAt)}
-                {item.modifiedAt &&
-                  item.modifiedAt !== item.createdAt &&
+                {formatDate(item?.createdAt)}
+                {item?.modifiedAt &&
+                  item?.modifiedAt !== item?.createdAt &&
                   ' (수정됨)'}
               </p>
             </div>
@@ -93,7 +94,7 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
         {/* 게시글 내용 */}
         <div className="pl-12">
           <p className="font-['Pretendard'] text-base whitespace-pre-wrap">
-            {item.content}
+            {item?.content}
           </p>
         </div>
 
@@ -110,7 +111,7 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
               }
             />
             <span className="font-['Pretendard'] text-sm text-gray-600">
-              {isLiked ? item.likes + 1 : item.likes}
+              {isLiked ? item?.likes + 1 : item?.likes}
             </span>
             {/* like하면 현재 userStore에 있는 user의 정보를 받아 likeApi로 보내야 함 */}
           </div>
@@ -118,7 +119,7 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
           <div className="flex items-center space-x-1 cursor-pointer">
             <MessageCircle size={20} className="text-gray-500" />
             <span className="font-['Pretendard'] text-sm text-gray-600">
-              {item.comments}
+              {item?.comments}
             </span>
             {/* 댓글 클릭 시 해당 게시글 화면으로 넘어감: 해당 card와 달린 댓글만 보임 (컴포넌트 이동 필요) */}
           </div>

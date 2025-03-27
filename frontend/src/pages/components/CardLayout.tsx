@@ -10,7 +10,7 @@ const CardLayout: React.FC<CardLayoutProps> = ({ children }) => {
       {/* 카드 본체 */}
       <div className="w-full flex card-layout-at-700 max-w-special-nav justify-center">
         <div
-          className="w-full flex bg-[#ffffff] rounded-t-[2rem] shadow-md relative w640"
+          className="w-full flex bg-[#ffffff] rounded-t-[2rem] shadow-md relative w640 z-10"
           style={{ height: 'calc(100vh - 60px)' }}
         >
           <div className="flex flex-grow relative flex-col overflow-auto scrollbar-hide">

@@ -28,7 +28,7 @@ const LNB = () => {
 
   return (
     <>
-      <nav className="fixed w-[76px] h-full min-h-[30rem] top-0 left-0 flex flex-col items-center z-10">
+      <nav className="fixed w-[76px] h-full min-h-[30rem] top-0 left-0 flex flex-col items-center z-20">
         {/* 로고 */}
         <div className="nav-header-container py-4">
           <img src={iconImage} alt="logo" />
