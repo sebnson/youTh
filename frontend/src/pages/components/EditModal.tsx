@@ -10,27 +10,30 @@ import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import defaultProfile from '../../assets/defaultProfile.svg';
 import { useUserStore } from '../../store/userStore';
 import { ContentItem } from '@/types/content';
-
+import { getPostDetail, updatePost } from 'api/PostApi';
 interface EditModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   postId: number;
+  onUpdateSuccess?: () => void;
 }
 
 const EditModal: React.FC<EditModalProps> = ({
   isOpen,
   onOpenChange,
   postId,
+  onUpdateSuccess,
 }) => {
-  const { userId, username, userNickname } = useUserStore();
+  const { username, userNickname } = useUserStore();
   const [postContent, setPostContent] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedImageBase64, setSelectedImageBase64] = useState<string | null>(
-    null,
-  );
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
+  const [isImageRemoved, setIsImageRemoved] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [originalPost, setOriginalPost] = useState<ContentItem | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [charactersRemaining, setCharactersRemaining] = useState(500);
 
   useEffect(() => {
     if (isOpen && postId) {
@@ -41,39 +44,59 @@ const EditModal: React.FC<EditModalProps> = ({
   const fetchPostData = async () => {
     setIsLoading(true);
     try {
-      // api 호출
-      // const response = await fetch(`/api/posts/${postId}`);
-      // const data = await response.json();
+      let postData;
+      try {
+        postData = await getPostDetail(postId);
+      } catch (apiError) {
+        console.warn('API 호출 실패, 목데이터를 사용합니다:', apiError);
+        const mockData = await getMockData();
+        postData = mockData.find((post) => post.id === postId);
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Mock data
-      const mockContents = await getMockData();
-      const postData = mockContents.find((post) => post.id === postId);
+        if (!postData) {
+          throw new Error('목데이터에서도 게시글을 찾을 수 없습니다.');
+        }
+      }
 
       if (postData) {
-        setOriginalPost(postData);
+        setOriginalPost(postData as unknown as ContentItem);
         setPostContent(postData.content);
+        setCharactersRemaining(500 - postData.content.length);
 
         if (postData.image) {
-          setSelectedImage(postData.image);
-          setSelectedImageBase64(postData.image);
+          setSelectedImage(postData.image as string);
+          setOriginalImageUrl(postData.image as string);
+          setIsImageRemoved(false);
         } else {
           setSelectedImage(null);
-          setSelectedImageBase64(null);
+          setOriginalImageUrl(null);
         }
       } else {
         console.error(`Post with ID ${postId} not found`);
+        alert(
+          JSON.stringify({
+            title: '게시글을 찾을 수 없음',
+            description: '요청하신 게시글을 찾을 수 없습니다.',
+            variant: 'destructive',
+          }),
+        );
         onOpenChange(false);
       }
     } catch (error) {
-      console.error('Error fetching post:', error);
+      console.error('게시글 가져오기 실패 (API 및 목데이터):', error);
+      alert(
+        JSON.stringify({
+          title: '게시글 로딩 실패',
+          description: '게시글을 불러오는 중 오류가 발생했습니다.',
+          variant: 'destructive',
+        }),
+      );
+      onOpenChange(false);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Mock
+  // Mock 데이터
   const getMockData = async () => {
     return [
       {
@@ -82,13 +105,16 @@ const EditModal: React.FC<EditModalProps> = ({
           '오늘은 날씨가 정말 좋네요. 모두 즐거운 하루 되세요!오늘은 날씨가 정말 좋네요. 모두 즐거운 하루 되세요!오늘은 날씨가 정말 좋네요. 모두 즐거운 하루 되세요!오늘은 날씨가 정말 좋네요. 모두 즐거운 하루 되세요!오늘은 날씨가 정말 좋네요. 모두 즐거운 하루 되세요!오늘은 날씨가 정말 좋네요. 모두 즐거운 하루 되세요!오늘은 날씨가 정말 좋네요. 모두 즐거운 하루 되세요!',
         createdAt: '2024-03-27T12:35:10',
         modifiedAt: '2024-03-27T12:35:10',
-        author: {
+        user: {
           id: 1,
-          nickname: 'sebeen',
+          email: 'test@example.com',
+          name: 'sebeen',
+          nickname: 'sebnson',
         },
         likes: 12,
         comments: 1,
         image: null,
+        useYn: true,
       },
     ];
   };
@@ -102,13 +128,8 @@ const EditModal: React.FC<EditModalProps> = ({
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setSelectedImageBase64(base64String);
-      };
-      reader.readAsDataURL(file);
+      setSelectedImageFile(file);
+      setIsImageRemoved(false);
       console.log('File selected:', file);
     }
 
@@ -119,47 +140,71 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleDeleteImage = () => {
     setSelectedImage(null);
-    setSelectedImageBase64(null);
+    setSelectedImageFile(null);
+    setIsImageRemoved(true);
   };
 
   const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setPostContent(e.target.value);
+    const newContent = e.target.value;
+    if (newContent.length <= 500) {
+      setPostContent(newContent);
+      setCharactersRemaining(500 - newContent.length);
+    }
   };
 
   const handleSubmit = async () => {
+    if (!isPostButtonEnabled) return;
+
     setIsLoading(true);
+
     try {
-      // const response = await fetch(`/api/posts/${postId}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     content: postContent,
-      //     image: selectedImageBase64,
-      //   }),
-      // });
+      // 이미지 처리 로직
+      let imageToSend = null;
 
-      // if (!response.ok) {
-      //   throw new Error('Failed to update post');
-      // }
+      if (selectedImageFile) {
+        imageToSend = selectedImageFile;
+      } else if (isImageRemoved) {
+        imageToSend = null;
+      } else if (originalImageUrl) {
+        imageToSend = originalImageUrl;
+      }
 
-      // Simulate API latency
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // API 호출
+      const response = await updatePost(postId, {
+        content: postContent,
+        image: imageToSend,
+      });
 
+      console.log('게시글 수정 성공:', response);
+
+      // 성공 알림
       alert(
-        `게시글 ID: ${postId}\n` +
-          `유저 ID: ${userId}\n` +
-          `유저 이름: ${username}\n` +
-          `유저 닉네임: ${userNickname}\n` +
-          `수정된 내용: ${postContent}\n` +
-          `이미지: ${selectedImageBase64 || '없음'}`,
+        JSON.stringify({
+          title: '수정 완료',
+          description: '게시글이 성공적으로 수정되었습니다.',
+          variant: 'default',
+        }),
       );
 
       onOpenChange(false);
+
+      // 수정 성공 콜백 호출 (목록 새로고침 등)
+      if (onUpdateSuccess) {
+        onUpdateSuccess();
+      }
     } catch (error) {
-      console.error('Error updating post:', error);
-      alert('게시글 업데이트 중 오류가 발생했습니다.');
+      const errorMessage =
+        error instanceof Error ? error.message : '게시글 수정에 실패했습니다.';
+
+      alert(
+        JSON.stringify({
+          title: '수정 실패',
+          description: errorMessage,
+          variant: 'destructive',
+        }),
+      );
+
+      console.error('게시글 수정 실패:', error);
     } finally {
       setIsLoading(false);
     }
@@ -169,8 +214,11 @@ const EditModal: React.FC<EditModalProps> = ({
     if (!isOpen) {
       setPostContent('');
       setSelectedImage(null);
-      setSelectedImageBase64(null);
+      setSelectedImageFile(null);
+      setOriginalImageUrl(null);
+      setIsImageRemoved(false);
       setOriginalPost(null);
+      setCharactersRemaining(500);
     }
   }, [isOpen]);
 
@@ -214,13 +262,19 @@ const EditModal: React.FC<EditModalProps> = ({
         </div>
 
         <div className="space-y-4">
-          <textarea
-            placeholder="수정할 내용을 입력하세요"
-            value={postContent}
-            onChange={handleContentChange}
-            className="w-full min-h-[200px] resize-none p-3 rounded-md bg-gray-100 font-['Pretendard']"
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <textarea
+              placeholder="수정할 내용을 입력하세요"
+              value={postContent}
+              onChange={handleContentChange}
+              className="w-full min-h-[200px] resize-none p-3 rounded-md bg-gray-100 font-['Pretendard']"
+              disabled={isLoading}
+              maxLength={500}
+            />
+            <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+              {charactersRemaining}/500
+            </div>
+          </div>
 
           {selectedImage && (
             <div className="mt-2 relative inline-block">
@@ -254,7 +308,7 @@ const EditModal: React.FC<EditModalProps> = ({
               accept="image/*"
               className="hidden"
               onChange={handleFileChange}
-              id="picture"
+              id="edit-picture"
               disabled={isLoading}
             />
 
