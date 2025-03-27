@@ -23,7 +23,7 @@ public class CommentService implements ICommentService{
     if(boardId == null){
         throw new CustomException("아이디가 없습니다", ExceptionType.BOARD_ID_INVALID);
     }
-    List<Comment> allComments = commentRepository.findAll();
+    List<Comment> allComments = commentRepository.findByBoardId(boardId);
     List<CommentResponseDto> responseDtos = allComments.stream()
         .map(entity -> {
           User user = entity.getUser();
