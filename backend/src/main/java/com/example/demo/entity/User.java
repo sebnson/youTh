@@ -39,15 +39,18 @@ public class User {
     @Column(length = 20, nullable = false)
     String nickname;
 
+    @Builder.Default
     @Column(nullable = false)
     boolean useYn = true;
 
     LocalDateTime createdAt;
     LocalDateTime modifiedAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     List<BoardLike> boardLikes = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     List<Board> boards = new ArrayList<>();
 
