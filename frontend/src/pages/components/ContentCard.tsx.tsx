@@ -13,7 +13,7 @@ interface ContentCardProps {
 const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
   const { userId } = useUserStore();
   const [isLiked, setIsLiked] = useState(false);
-  const isAuthor = userId === item.author.id;
+  const isAuthor = userId === item.userId;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -58,7 +58,7 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
             </div>
             <div className="ml-3 flex flex-col">
               <p className="font-['Pretendard'] font-bold text-base">
-                {item.author.nickname}
+                {item.nickname}
               </p>
               <p className="font-['Pretendard'] text-sm text-gray-500">
                 {formatDate(item.createdAt)}

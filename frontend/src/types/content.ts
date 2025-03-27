@@ -3,11 +3,9 @@ export interface ContentItem {
   content: string;
   createdAt: string;
   modifiedAt?: string;
-  author: {
-    id: number;
-    nickname: string;
-  };
+  userId: number;
+  nickname: string;
   likes: number;
   comments: number;
-  image: string | null; // Added to support image attachments in posts
+  image?: string | null; // Added to support image attachments in posts
 }

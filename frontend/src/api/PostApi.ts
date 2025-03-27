@@ -1,7 +1,5 @@
-import axios from 'axios';
-
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://172.16.200.108:8080/api';
+  import.meta.env.VITE_API_BASE_URL || 'http://10.10.140.100:8080/api';
 
 interface CreatePostRequest {
   user_id: number;
@@ -20,6 +18,7 @@ interface PostResponse {
   useYn: boolean;
   createdAt: string;
   userId: number;
+  nickname: string;
   likes: number;
   comments: number;
 }
@@ -50,37 +49,32 @@ export const createPost = async (
   postData: CreatePostRequest,
 ): Promise<PostResponse> => {
   try {
-    const response = await axios.post<PostResponse>(
-      `${API_BASE_URL}/boards`,
-      {
+    const response = await fetch(`${API_BASE_URL}/boards`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         userId: postData.user_id,
         content: postData.content,
         image: postData.image || null,
-      },
-      {
-        timeout: 10000, // 10초 타임아웃 설정
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+      }),
+      signal: AbortSignal.timeout(10000), // 10초 타임아웃 설정
+    });
 
-    return response.data;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || '게시글 작성에 실패했습니다.');
+    }
+
+    return await response.json();
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      // API 에러 처리
-      const errorMessage =
-        error.response?.data?.message || '게시글 작성에 실패했습니다.';
-      console.error('게시글 작성 API 에러:', errorMessage);
-      throw new Error(errorMessage);
+    if (error instanceof Error) {
+      console.error('게시글 작성 API 에러:', error.message);
+      throw new Error(error.message);
     } else {
-      // 기타 에러 처리
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : '게시글 작성 중 오류가 발생했습니다.';
-      console.error('게시글 작성 중 오류:', errorMessage);
-      throw new Error(errorMessage);
+      console.error('게시글 작성 중 오류:', error);
+      throw new Error('게시글 작성 중 오류가 발생했습니다.');
     }
   }
 };
@@ -91,18 +85,26 @@ export const createPost = async (
  */
 export const getPosts = async (): Promise<PostResponse[]> => {
   try {
-    const response = await axios.get<PostResponse[]>(`${API_BASE_URL}/boards`, {
-      timeout: 10000, // 10초 타임아웃 설정
+    const response = await fetch(`${API_BASE_URL}/boards`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(10000), // 10초 타임아웃 설정
     });
 
-    return response.data;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.message || '게시글 목록을 불러오는데 실패했습니다.',
+      );
+    }
+
+    return await response.json();
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const errorMessage =
-        error.response?.data?.message ||
-        '게시글 목록을 불러오는데 실패했습니다.';
-      console.error('게시글 목록 조회 API 에러:', errorMessage);
-      throw new Error(errorMessage);
+    if (error instanceof Error) {
+      console.error('게시글 목록 조회 API 에러:', error.message);
+      throw new Error(error.message);
     } else {
       console.error('게시글 목록 조회 중 오류 발생:', error);
       throw new Error('게시글 목록을 불러오는데 실패했습니다.');
@@ -131,33 +133,25 @@ export const updatePost = async (
       formData.append('imageRemoved', 'true');
     }
 
-    const response = await axios.patch<PostDetailResponse>(
-      `${API_BASE_URL}/boards/${postId}`,
-      formData,
-      {
-        timeout: 15000, // 15초 타임아웃 설정
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      },
-    );
+    const response = await fetch(`${API_BASE_URL}/boards/${postId}`, {
+      method: 'PATCH',
+      body: formData,
+      signal: AbortSignal.timeout(15000), // 15초 타임아웃 설정
+    });
 
-    return response.data;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || '게시글 수정에 실패했습니다.');
+    }
+
+    return await response.json();
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      // API 에러 처리
-      const errorMessage =
-        error.response?.data?.message || '게시글 수정에 실패했습니다.';
-      console.error('게시글 수정 API 에러:', errorMessage);
-      throw new Error(errorMessage);
+    if (error instanceof Error) {
+      console.error('게시글 수정 API 에러:', error.message);
+      throw new Error(error.message);
     } else {
-      // 기타 에러 처리
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : '게시글 수정 중 오류가 발생했습니다.';
-      console.error('게시글 수정 중 오류:', errorMessage);
-      throw new Error(errorMessage);
+      console.error('게시글 수정 중 오류:', error);
+      throw new Error('게시글 수정 중 오류가 발생했습니다.');
     }
   }
 };
@@ -171,20 +165,21 @@ export const getPostDetail = async (
   postId: number,
 ): Promise<PostDetailResponse> => {
   try {
-    const response = await axios.get<PostDetailResponse>(
-      `${API_BASE_URL}/boards/${postId}`,
-      {
-        timeout: 10000, // 10초 타임아웃 설정
-      },
-    );
+    const response = await fetch(`${API_BASE_URL}/boards/${postId}`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(10000), // 10초 타임아웃 설정
+    });
 
-    return response.data;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || '게시글을 불러오는데 실패했습니다.');
+    }
+
+    return await response.json();
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const errorMessage =
-        error.response?.data?.message || '게시글을 불러오는데 실패했습니다.';
-      console.error('게시글 조회 API 에러:', errorMessage);
-      throw new Error(errorMessage);
+    if (error instanceof Error) {
+      console.error('게시글 조회 API 에러:', error.message);
+      throw new Error(error.message);
     } else {
       console.error('게시글 조회 중 오류 발생:', error);
       throw new Error('게시글을 불러오는데 실패했습니다.');
