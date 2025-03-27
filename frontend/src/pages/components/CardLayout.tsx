@@ -14,7 +14,7 @@ const CardLayout: React.FC<CardLayoutProps> = ({ children }) => {
           style={{ height: 'calc(100vh - 60px)' }}
         >
           <div className="flex flex-grow relative flex-col overflow-auto scrollbar-hide">
-            <div className="w-[90%] mx-auto">{children}</div>
+            <div className="w-full mx-auto">{children}</div>
           </div>
         </div>
       </div>

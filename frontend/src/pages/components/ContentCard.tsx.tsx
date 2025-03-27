@@ -44,7 +44,7 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
   };
 
   return (
-    <div className="w-full border-b border-gray-200 py-4">
+    <div className="w-[90%] mx-auto flex items-center border-b border-gray-200 py-4">
       <div className="space-y-3">
         {/* 프로필 및 작성자 정보 */}
         <div className="flex items-start justify-between">
