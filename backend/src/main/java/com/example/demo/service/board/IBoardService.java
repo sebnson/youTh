@@ -8,4 +8,6 @@ public interface IBoardService {
     BoardResponseDto save(BoardCreateRequestDto request);
 
     List<BoardResponseDto> getAllBoards();
+
+    List<BoardResponseDto> getUserBoards(Integer userId);
 }

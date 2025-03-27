@@ -44,4 +44,11 @@ public class BoardService implements IBoardService {
             .map(BoardResponseDto::from)
             .toList();
     }
+
+    public List<BoardResponseDto> getUserBoards(Integer userId) {
+        List<Board> boards = boardRepository.findAllByUserId(userId);
+        return boards.stream()
+            .map(BoardResponseDto::from)
+            .toList();
+    }
 }

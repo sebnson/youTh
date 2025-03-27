@@ -14,7 +14,7 @@ interface ContentCardProps {
 const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
   const { userId } = useUserStore();
   const [isLiked, setIsLiked] = useState(false);
-  const isAuthor = userId === item?.id;
+  const isAuthor = userId === item.userId;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

@@ -1,57 +1,48 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import ContentCard from '@/pages/components/ContentCard.tsx';
 import EditModal from '@/pages/components/EditModal';
 import { ContentItem } from '@/types/content';
+import { getPosts } from '@/api/PostApi';
 
 const MainFeed = () => {
   const [contents, setContents] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const observer = useRef<IntersectionObserver | null>(null);
-  const pageSize = 5; // Number of items to load per page
 
   // Add state for edit modal
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPostId, setCurrentPostId] = useState<number | null>(null);
 
-  // Function to fetch contents with pagination
-  const fetchContents = useCallback(async (pageNum: number) => {
+  // Function to fetch contents
+  const fetchContents = async () => {
     try {
       setLoading(true);
-      // Simulate API call with pagination
-      // In a real app, you would call your API with the page number
-      // For example: const response = await api.get(`/contents?page=${pageNum}&size=${pageSize}`);
 
       // Simulating delay for API call
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      // Mock: Get a slice of your mock data based on page number
-      // This would be replaced with actual API response data
-      const startIndex = (pageNum - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
+      // 실제 API 호출로 게시글 목록 가져오기
+      const posts = await getPosts();
 
-      // This is just a placeholder - your actual data would come from API
-      const mockData = await getMockData();
-      const newData = mockData.slice(startIndex, endIndex);
+      // ContentItem 형식으로 변환
+      const contentItems = posts.map((post) => ({
+        id: post.id,
+        content: post.content,
+        createdAt: post.createdAt,
+        modifiedAt: post.createdAt,
+        userId: post.userId,
+        nickname: post.nickname,
+        likes: post.likes,
+        comments: post.comments,
+        image: null, // 기본값으로 null 사용
+      })) as ContentItem[];
 
-      // Check if we've reached the end of the data
-      if (newData.length < pageSize) {
-        setHasMore(false);
-      }
-
-      // Add new data to existing content
-      if (pageNum === 1) {
-        setContents(newData);
-      } else {
-        setContents((prev) => [...prev, ...newData]);
-      }
+      setContents(contentItems);
     } catch (error) {
-      console.error('Failed to fetch contents:', error);
+      console.error('게시글 목록을 가져오는데 실패했습니다:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   // Function to get mock data - using your provided mock data
   const getMockData = async () => {
@@ -137,65 +128,10 @@ const MainFeed = () => {
     ] as ContentItem[];
   };
 
-  const lastContentElementRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (loading) return;
-
-      if (observer.current) {
-        observer.current.disconnect();
-      }
-
-      observer.current = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && hasMore) {
-            setPage((prevPage) => prevPage + 1);
-          }
-        },
-        {
-          root: null,
-          rootMargin: '0px',
-          threshold: 0.1, // 요소의 10%만 보여도 감지
-        },
-      );
-
-      if (node) {
-        observer.current.observe(node);
-      }
-    },
-    [loading, hasMore],
-  );
-
-  // 초기 로드 시 화면에 콘텐츠가 꽉 차지 않을 경우 추가 로드를 위한 체크
   useEffect(() => {
-    if (!loading && contents.length > 0 && hasMore) {
-      // 화면 높이와 문서 높이를 비교하여 스크롤이 생기지 않으면 추가로 콘텐츠를 로드
-      const checkIfMoreContentNeeded = () => {
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    fetchContents();
+  }, []);
 
-        // 스크롤바가 없거나 하단에 매우 가까운 경우 더 많은 콘텐츠 로드
-        if (windowHeight + scrollTop >= documentHeight - 100 && hasMore) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      };
-
-      // 콘텐츠 로드 후 검사
-      setTimeout(checkIfMoreContentNeeded, 100);
-
-      // 창 크기 변경 시 재검사
-      window.addEventListener('resize', checkIfMoreContentNeeded);
-      return () =>
-        window.removeEventListener('resize', checkIfMoreContentNeeded);
-    }
-  }, [loading, contents.length, hasMore]);
-
-  // Initial load and load more when page changes
-  useEffect(() => {
-    fetchContents(page);
-  }, [page, fetchContents]);
-
-  // Updated edit handler to open the edit modal
   const handleEdit = (id: number) => {
     setCurrentPostId(id);
     setIsEditModalOpen(true);
@@ -204,7 +140,8 @@ const MainFeed = () => {
   const handleDelete = (id: number) => {
     if (window.confirm('이 게시글을 삭제하시겠습니까?')) {
       console.log(`Deleting post with ID: ${id}`);
-      // api 연결
+      // 삭제 API 연결 필요
+      // 임시로 프론트에서만 삭제
       setContents(contents.filter((item) => item.id !== id));
     }
   };
@@ -213,28 +150,14 @@ const MainFeed = () => {
     <div className="py-4">
       <div className="space-y-4">
         {contents.length > 0
-          ? contents.map((item, index) => {
-              if (contents.length === index + 1) {
-                return (
-                  <div ref={lastContentElementRef} key={item.id}>
-                    <ContentCard
-                      item={item}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                    />
-                  </div>
-                );
-              } else {
-                return (
-                  <ContentCard
-                    key={item.id}
-                    item={item}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                  />
-                );
-              }
-            })
+          ? contents.map((item) => (
+              <ContentCard
+                key={item.id}
+                item={item}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))
           : !loading && (
               <div className="text-center py-4">게시글이 없습니다.</div>
             )}
@@ -259,8 +182,7 @@ const MainFeed = () => {
           onOpenChange={(open) => {
             setIsEditModalOpen(open);
             if (!open && currentPostId) {
-              // fetch just the updated post
-              fetchContents(1); // Reset to page 1 and refresh
+              fetchContents();
               setCurrentPostId(null);
             }
           }}
