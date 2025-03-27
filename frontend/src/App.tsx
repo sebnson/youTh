@@ -26,8 +26,7 @@ const App = () => {
     <>
       <LNB />
       <CardLayout>
-        <Outlet />
-        <MainFeed />
+        <Outlet /> 
       </CardLayout>
     </>
   );
