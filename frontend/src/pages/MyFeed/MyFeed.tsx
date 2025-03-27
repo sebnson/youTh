@@ -1,7 +1,11 @@
+import MyFeedProfile from '@/pages/MyFeed/components/MyFeedProfile';
+import MyFeedTab from '@/pages/MyFeed/components/MyFeedTab';
+
 const MyFeed = () => {
   return (
     <>
-      <div>My Feed</div>
+      <MyFeedProfile />
+      <MyFeedTab />
     </>
   );
 };
