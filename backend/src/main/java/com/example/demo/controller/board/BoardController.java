@@ -1,18 +1,41 @@
 package com.example.demo.controller.board;
 
-
+import com.example.demo.controller.board.dto.BoardCreateRequestDto;
+import com.example.demo.controller.board.dto.BoardCreateResponseDto;
+import com.example.demo.service.board.IBoardService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequestMapping("api/boards")
-public class BoardController {
 
+@Slf4j
+@RestController()
+@RequestMapping("/api/boards")
+@RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+public class BoardController {
+    IBoardService boardService;
+
+    @PostMapping("")
+    public ResponseEntity<BoardCreateResponseDto> save(@RequestBody BoardCreateRequestDto request) {
+//        log.info("컨트롤러");
+        BoardCreateResponseDto response = boardService.save(request);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(response);
+    }
   // 전체 글 보기
   @GetMapping
   public ResponseEntity<List<Map<String, Object>>> getAllBoards() {
@@ -57,26 +80,6 @@ public class BoardController {
     );
 
     return ResponseEntity.ok(response);
-  }
-
-  // 글쓰기
-  @PostMapping
-  public ResponseEntity<Map<String, Object>> createBoard(@RequestBody Map<String, Object> request) {
-    if (request.get("content") == null || request.get("content").toString().length() > 500) {
-      return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "내용은 500자 이하여야 합니다."));
-    }
-
-    Map<String, Object> response = Map.of(
-        "id", 1,
-        "content", request.get("content"),
-        "useYn", true,
-        "createdAt", LocalDateTime.now(),
-        "userId", 1,
-        "likes", 0,
-        "comments", 0
-    );
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   // 글 수정
