@@ -11,6 +11,7 @@ import defaultProfile from '../../assets/defaultProfile.svg';
 import { useUserStore } from '../../store/userStore';
 import { ContentItem } from '@/types/content';
 import { getPostDetail, updatePost } from '@/api/PostApi';
+import { redirect } from 'react-router-dom';
 interface EditModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -61,15 +62,6 @@ const EditModal: React.FC<EditModalProps> = ({
         setOriginalPost(postData as unknown as ContentItem);
         setPostContent(postData.content);
         setCharactersRemaining(500 - postData.content.length);
-
-        if (postData.image) {
-          setSelectedImage(postData.image as string);
-          setOriginalImageUrl(postData.image as string);
-          setIsImageRemoved(false);
-        } else {
-          setSelectedImage(null);
-          setOriginalImageUrl(null);
-        }
       } else {
         console.error(`Post with ID ${postId} not found`);
         alert(
@@ -175,23 +167,19 @@ const EditModal: React.FC<EditModalProps> = ({
         image: imageToSend,
       });
 
-      console.log('게시글 수정 성공:', response);
-
       // 성공 알림
-      alert(
-        JSON.stringify({
-          title: '수정 완료',
-          description: '게시글이 성공적으로 수정되었습니다.',
-          variant: 'default',
-        }),
-      );
+      if (response.content) {
+        alert(
+          JSON.stringify({
+            title: '수정 완료',
+            description: '게시글이 성공적으로 수정되었습니다.',
+            variant: 'default',
+          }),
+        );
+        redirect('/');
+      }
 
       onOpenChange(false);
-
-      // 수정 성공 콜백 호출 (목록 새로고침 등)
-      if (onUpdateSuccess) {
-        onUpdateSuccess();
-      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : '게시글 수정에 실패했습니다.';

@@ -4,7 +4,7 @@ const API_BASE_URL =
 interface CreatePostRequest {
   user_id: number;
   content: string;
-  image?: File | null | string | undefined;
+  id: number;
 }
 
 interface UpdatePostRequest {
@@ -24,7 +24,6 @@ interface PostResponse {
 }
 
 interface PostDetailResponse {
-  image?: string;
   id: number;
   content: string;
   useYn: boolean;
