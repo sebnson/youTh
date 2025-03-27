@@ -1,0 +1,22 @@
+name: ✨Feature
+description: 기능 개발 템플릿
+title: "feat: "
+body:
+  - type: textarea
+    attributes:
+      label: 📄 설명
+      description: 작업할 Feature에 대한 설명을 작성해 주세요.
+      placeholder: ex) ㅇㅇㅇ 구현
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: ✅ 작업 사항
+      description: 할 일을 리스트 형태로 작성해주세요.
+      placeholder: ex) - ㅇㅇㅇ
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 🙋🏻 참고 자료
+      description: 참고 자료가 있다면 작성해 주세요. (ex. 스크린샷)
