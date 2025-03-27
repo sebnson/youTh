@@ -10,6 +10,7 @@ import com.example.demo.exception.ExceptionType;
 import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.repository.comment.CommentRepository;
 import com.example.demo.repository.user.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -50,10 +51,26 @@ public class CommentService implements ICommentService{
         ExceptionType.USER_NOT_FOUND));
     comment.setUser(user);
     comment.setBoard(board);
+    comment.setCreatedAt(LocalDateTime.now());
     Comment savedComment = commentRepository.save(comment);
     CommentResponseDto responseDto = CommentResponseDto.from(savedComment,user.getId(),user.getNickname());
     return responseDto;
 
+  }
+  @Override
+  public CommentResponseDto updateComment(Integer commentId, CommentRequestDto requestDto) {
+    User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() -> new CustomException("사용자 없음",
+        ExceptionType.USER_NOT_FOUND));
+    Comment existingComment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException("댓글이 존재하지 않습니다",
+        ExceptionType.COMMENT_NOT_FOUND));
+
+    existingComment.setContent(requestDto.getContent());
+    existingComment.setModifiedAt(LocalDateTime.now());
+    Comment savedComment = commentRepository.save(existingComment);
+
+
+    CommentResponseDto responseDto = CommentResponseDto.from(savedComment,user.getId(),user.getNickname());
+    return responseDto;
 
   }
 

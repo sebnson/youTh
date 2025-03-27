@@ -15,7 +15,8 @@ public enum ExceptionType {
   LOGOUT_FAILED(HttpStatus.UNAUTHORIZED,Level.WARN),
   USER_NOT_FOUND(HttpStatus.NOT_FOUND,Level.WARN),
   BOARD_ID_INVALID(HttpStatus.BAD_REQUEST,Level.WARN),
-  BOARD_NOT_FOUND(HttpStatus.NOT_FOUND,Level.WARN);
+  BOARD_NOT_FOUND(HttpStatus.NOT_FOUND,Level.WARN),
+  COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,Level.WARN);
 
 
   HttpStatus httpStatus;
