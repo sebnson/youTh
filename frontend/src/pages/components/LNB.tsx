@@ -61,7 +61,7 @@ const LNB = () => {
           </div>
           <div
             className="flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl w-16 h-16 text-[#B8B8B8] hover:text-[#111111] nav-footer-rounded"
-            onClick={() => handleLogout({ id: 1 })}
+            onClick={() => handleLogout({ id: 2 })}
           >
             <Power size={24} />
           </div>

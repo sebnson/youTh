@@ -21,11 +21,11 @@ interface LoginResponse {
 }
 
 interface LogoutRequest {
-  id: number
+  id: number;
 }
 
 interface LogoutResponse {
-  status: number
+  status: number;
 }
 
 /**
@@ -108,13 +108,21 @@ export const logoutUser = async (
   logoutData: LogoutRequest,
 ): Promise<LogoutResponse> => {
   try {
-    const response = await axios.post<LogoutResponse>(
-      `${API_BASE_URL}/users/logout`,
-      logoutData,
-    );
-    return response.data;
-  } catch (error) {
-    console.error('로그아웃 실패:', error); // 자세한 오류 로깅
+    const response = await fetch(`${API_BASE_URL}/users/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(logoutData),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error: any) {
+    console.error('로그아웃 실패:', error);
     throw new Error(`로그아웃 실패: ${error.message || '알 수 없는 오류'}`);
   }
 };
