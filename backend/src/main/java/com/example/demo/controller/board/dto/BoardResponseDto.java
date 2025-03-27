@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public class BoardCreateResponseDto {
+public class BoardResponseDto {
     Integer id;
     String content;
     Boolean useYn;
@@ -19,8 +19,8 @@ public class BoardCreateResponseDto {
     Integer likes;
     Integer comments;
 
-    public static BoardCreateResponseDto from(Board board) {
-        return new BoardCreateResponseDto(
+    public static BoardResponseDto from(Board board) {
+        return new BoardResponseDto(
             board.getId(),
             board.getContent(),
             board.getUseYn(),

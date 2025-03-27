@@ -1,11 +1,12 @@
 package com.example.demo.service.board;
 
 import com.example.demo.controller.board.dto.BoardCreateRequestDto;
-import com.example.demo.controller.board.dto.BoardCreateResponseDto;
+import com.example.demo.controller.board.dto.BoardResponseDto;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.User;
 import com.example.demo.repository.board.BoardRepository;
 import com.example.demo.repository.user.UserRepository;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +21,7 @@ public class BoardService implements IBoardService {
     BoardRepository boardRepository;
     UserRepository userRepository;
 
-    public BoardCreateResponseDto save(BoardCreateRequestDto request) {
+    public BoardResponseDto save(BoardCreateRequestDto request) {
         log.info("들어온 req: {}", request.getContent());
 
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("사용자 없음"));
@@ -31,8 +32,13 @@ public class BoardService implements IBoardService {
 
         Board created = boardRepository.save(entity);
 
-        return BoardCreateResponseDto.from(created);
+        return BoardResponseDto.from(created);
     }
 
-    ;
+    public List<BoardResponseDto> getAllBoards() {
+        List<Board> boards = boardRepository.findAll();
+        return boards.stream()
+            .map(BoardResponseDto::from)
+            .toList();
+    }
 }
