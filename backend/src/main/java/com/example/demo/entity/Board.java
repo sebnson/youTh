@@ -13,11 +13,19 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
+@Getter
+@Setter
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board {
     @Id
@@ -25,8 +33,11 @@ public class Board {
     Integer id;
     @Column(length = 500, nullable = false)
     String content;
+    @Column(length = 255)
+    String image_path;
+    @Builder.Default
     @Column(nullable = false)
-    boolean useYn = true;
+    Boolean useYn = true;
     LocalDateTime createdAt;
     LocalDateTime modifiedAt;
 
@@ -34,9 +45,11 @@ public class Board {
     @JoinColumn(name = "user_id")
     User user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
     List<BoardLike> likes = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
     List<Comment> comments = new ArrayList<>();
 

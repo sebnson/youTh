@@ -1,0 +1,157 @@
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Image, X } from 'lucide-react';
+import { useState, useRef, ChangeEvent } from 'react';
+import defaultProfile from '../../assets/defaultProfile.svg';
+import { useUserStore } from '../../store/userStore';
+
+interface PostModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const PostModal: React.FC<PostModalProps> = ({ isOpen, onOpenChange }) => {
+  const { userId, username, userNickname } = useUserStore();
+  const [postContent, setPostContent] = useState<string>('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageBase64, setSelectedImageBase64] = useState<string | null>(
+    null,
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
+
+      // Convert to Base64 for storage/submission
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setSelectedImageBase64(base64String);
+      };
+      reader.readAsDataURL(file);
+      console.log('File selected:', file);
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setSelectedImage(null);
+    setSelectedImageBase64(null);
+  };
+
+  const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setPostContent(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    alert(
+      `유저 ID: ${userId}\n` +
+        `유저 이름: ${username}\n` +
+        `유저 닉네임: ${userNickname}\n` +
+        `게시 내용: ${postContent}\n` +
+        `이미지: ${selectedImageBase64 || '없음'}`,
+    );
+    resetForm();
+    onOpenChange(false);
+  };
+
+  const resetForm = () => {
+    setPostContent('');
+    setSelectedImage(null);
+    setSelectedImageBase64(null);
+  };
+
+  const isPostButtonEnabled = postContent.trim().length > 0;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader className="flex items-center">
+          <DialogTitle className="font-['Pretendard']">
+            새로운 스레드
+          </DialogTitle>
+        </DialogHeader>
+        <div className="flex items-start">
+          <div className="w-12 h-12">
+            <img src={defaultProfile} alt="profile" />
+          </div>
+          <div className="mt-1 ml-1.5">
+            <p className="text-lg font-['Pretendard'] font-bold">{username}</p>
+            <div className="-mt-2 text-[14px] text-[#4d4d4d] font-['Pretendard']">
+              <p>{userNickname}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <textarea
+            placeholder="새로운 소식이 있나요?"
+            value={postContent}
+            onChange={handleContentChange}
+            className="w-full min-h-[200px] resize-none p-3 rounded-md bg-gray-100 font-['Pretendard']"
+          />
+
+          {selectedImage && (
+            <div className="mt-2 relative inline-block">
+              <img
+                src={selectedImage}
+                alt="Selected"
+                className="w-20 h-20 object-cover rounded-md"
+              />
+              <button
+                className="absolute -top-2 -right-2 bg-[#b8b8b8] bg-opacity-50 rounded-full p-1 text-white hover:bg-opacity-70"
+                onClick={handleDeleteImage}
+                type="button"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            <div
+              className="cursor-pointer text-[#B8B8B8] hover:text-[#111111]"
+              onClick={handleImageClick}
+            >
+              <Image size={24} />
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+              id="picture"
+            />
+
+            <Button
+              disabled={!isPostButtonEnabled}
+              className={!isPostButtonEnabled ? 'opacity-90' : ''}
+              onClick={handleSubmit}
+            >
+              게시
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default PostModal;
