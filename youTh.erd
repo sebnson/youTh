@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -128.0972,
-    "scrollLeft": -87,
+    "scrollTop": -5.0972,
+    "scrollLeft": 0,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
@@ -98,6 +98,7 @@
           "H_xmqETCw-cQznLX3MyeQ",
           "ldrGU7a58tyivH34Bzokk",
           "gX9-bT9HWhcJKREAS2-9v",
+          "JE7T0R4fsQ02bJxnPvu1e",
           "uFWey-PifBxeqgNljJ9iw",
           "P-c7f-gcnQRDN2q-2mMEY",
           "qnmZVTl3tmQ54qlN-4Q5I"
@@ -107,6 +108,7 @@
           "ldrGU7a58tyivH34Bzokk",
           "D8L3UXWuENmBB9orxwKpy",
           "gX9-bT9HWhcJKREAS2-9v",
+          "JE7T0R4fsQ02bJxnPvu1e",
           "uFWey-PifBxeqgNljJ9iw",
           "P-c7f-gcnQRDN2q-2mMEY",
           "qnmZVTl3tmQ54qlN-4Q5I"
@@ -120,7 +122,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1742973868369,
+          "updateAt": 1743045149037,
           "createAt": 1742968622914
         }
       },
@@ -900,6 +902,26 @@
           "updateAt": 1742978972143,
           "createAt": 1742978961951
         }
+      },
+      "JE7T0R4fsQ02bJxnPvu1e": {
+        "id": "JE7T0R4fsQ02bJxnPvu1e",
+        "tableId": "3_b4K5TMYEJ90cANT8_zD",
+        "name": "image_path",
+        "comment": "255",
+        "dataType": "VARCHAR",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 68,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1743045577768,
+          "createAt": 1743041588114
+        }
       }
     },
     "relationshipEntities": {
@@ -923,7 +945,7 @@
             "ldrGU7a58tyivH34Bzokk"
           ],
           "x": 500.6471,
-          "y": 257.41179999999997,
+          "y": 275.41179999999997,
           "direction": 2
         },
         "meta": {
@@ -998,7 +1020,7 @@
             "H_xmqETCw-cQznLX3MyeQ"
           ],
           "x": 313.1471,
-          "y": 307.41179999999997,
+          "y": 331.41179999999997,
           "direction": 8
         },
         "end": {
@@ -1054,7 +1076,7 @@
             "H_xmqETCw-cQznLX3MyeQ"
           ],
           "x": 500.6471,
-          "y": 157.4118,
+          "y": 163.4118,
           "direction": 2
         },
         "end": {
@@ -1565,6 +1587,16 @@
       {
         "name": 1742978966586,
         "dataType": 1742978972143
+      }
+    ],
+    "JE7T0R4fsQ02bJxnPvu1e": [
+      "tableColumnEntities",
+      1743041588112,
+      -1,
+      {
+        "name": 1743041599614,
+        "dataType": 1743041604366,
+        "comment": 1743045577766
       }
     ]
   }
