@@ -68,4 +68,10 @@ public class BoardService implements IBoardService {
 
         return BoardResponseDto.from(board);
     }
+
+    public void deleteBoard(Integer id) {
+        boardRepository.deleteById(id);
+    }
+
+    ;
 }
