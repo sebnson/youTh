@@ -58,6 +58,15 @@
   max-width: var(--cardlayout-max-width);
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 :root {
   --font-primary:
     'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,

@@ -4,16 +4,20 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Image, X } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { Image, X } from 'lucide-react';
+import { useState, useRef, ChangeEvent } from 'react';
 import defaultProfile from '../../assets/defaultProfile.svg';
 import { useUserStore } from '../../store/userStore';
 
-const PostModal = () => {
+interface PostModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const PostModal: React.FC<PostModalProps> = ({ isOpen, onOpenChange }) => {
   const { userId, username, userNickname } = useUserStore();
-  const [postContent, setPostContent] = useState('');
+  const [postContent, setPostContent] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageBase64, setSelectedImageBase64] = useState<string | null>(
     null,
@@ -24,7 +28,7 @@ const PostModal = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
@@ -50,12 +54,11 @@ const PostModal = () => {
     setSelectedImageBase64(null);
   };
 
-  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setPostContent(e.target.value);
   };
 
   const handleSubmit = () => {
-    // Show state values in an alert dialog with user information and full base64 image string
     alert(
       `유저 ID: ${userId}\n` +
         `유저 이름: ${username}\n` +
@@ -63,20 +66,20 @@ const PostModal = () => {
         `게시 내용: ${postContent}\n` +
         `이미지: ${selectedImageBase64 || '없음'}`,
     );
+    resetForm();
+    onOpenChange(false);
+  };
 
-    // Here you would typically send the data to your backend
-    // The complete base64 string is stored in selectedImageBase64
+  const resetForm = () => {
+    setPostContent('');
+    setSelectedImage(null);
+    setSelectedImageBase64(null);
   };
 
   const isPostButtonEnabled = postContent.trim().length > 0;
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="relative w-16 h-16 flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl text-[#B8B8B8] hover:text-[#111111]">
-          <Plus size={24} />
-        </div>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader className="flex items-center">
           <DialogTitle className="font-['Pretendard']">
