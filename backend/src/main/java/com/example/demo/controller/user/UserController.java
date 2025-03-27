@@ -3,6 +3,8 @@ package com.example.demo.controller.user;
 import com.example.demo.controller.user.dto.UserLoginRequestDto;
 import com.example.demo.controller.user.dto.UserLoginResponseDto;
 import com.example.demo.controller.user.dto.UserLogoutRequestDto;
+import com.example.demo.exception.CustomException;
+import com.example.demo.exception.ExceptionType;
 import com.example.demo.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -41,7 +43,7 @@ public class UserController {
       Integer loggedId = userLoggedIn.getId();
       if(loggedId != request.getId()){
         log.info("id: {}", loggedId);
-        throw  new RuntimeException("로그인 한 사용자 아님");
+        throw new CustomException("로그인 한 사용자가 아닙니다.", ExceptionType.LOGOUT_FAILED);
 
       }
       log.info("로그아웃 완료. 사용자: {}", session.getAttribute(LOGIN_MEMBER));
