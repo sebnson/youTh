@@ -13,7 +13,7 @@ interface ContentCardProps {
 const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
   const { userId } = useUserStore();
   const [isLiked, setIsLiked] = useState(false);
-  const isAuthor = userId === String(item.author.id);
+  const isAuthor = userId === item.author.id;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -95,17 +95,6 @@ const ContentCard = ({ item, onEdit, onDelete }: ContentCardProps) => {
           <p className="font-['Pretendard'] text-base whitespace-pre-wrap">
             {item.content}
           </p>
-
-          {/* 게시글 이미지가 있는 경우 표시 */}
-          {item.image && (
-            <div className="mt-3">
-              <img
-                src={item.image}
-                alt="Post attachment"
-                className="max-h-96 rounded-lg object-contain border border-gray-200"
-              />
-            </div>
-          )}
         </div>
 
         {/* 좋아요 및 댓글 수 */}

@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { loginUser } from 'api/LoginApi';
+import { loginUser } from '@/api/LoginApi';
 import { useNavigate } from 'react-router-dom';
 
 const loginFormSchema = z.object({

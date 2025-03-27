@@ -9,7 +9,7 @@ import { Image, X } from 'lucide-react';
 import { useState, useRef, ChangeEvent } from 'react';
 import defaultProfile from '../../assets/defaultProfile.svg';
 import { useUserStore } from '../../store/userStore';
-import { createPost } from 'api/PostApi';
+import { createPost } from '@/api/PostApi';
 
 interface PostModalProps {
   isOpen: boolean;

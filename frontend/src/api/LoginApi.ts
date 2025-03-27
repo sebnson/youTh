@@ -20,6 +20,14 @@ interface LoginResponse {
   modifiedAt: string;
 }
 
+interface LogoutRequest {
+  id: number
+}
+
+interface LogoutResponse {
+  status: number
+}
+
 /**
  * 로그인 API 함수
  * @param loginData 로그인 요청 데이터 (이메일, 비밀번호, 로그인 상태 유지)
@@ -38,7 +46,7 @@ export const loginUser = async (
     if (response.data && response.status === 200) {
       const { id, name, nickname } = response.data;
       const userStore = useUserStore.getState();
-      userStore.setUserInfo(String(id), name, nickname);
+      userStore.setUserInfo(id, name, nickname);
 
       // 로그인 상태 유지 옵션이 true인 경우 세션 스토리지에 저장
       if (loginData.rememberMe) {
@@ -96,8 +104,17 @@ export const autoLogin = (): boolean => {
 };
 
 // 로그아웃
-export const logoutUser = (): void => {
-  const userStore = useUserStore.getState();
-  userStore.setUserInfo('', '', '');
-  sessionStorage.removeItem('user');
+export const logoutUser = async (
+  logoutData: LogoutRequest,
+): Promise<LogoutResponse> => {
+  try {
+    const response = await axios.post<LogoutResponse>(
+      `${API_BASE_URL}/users/logout`,
+      logoutData,
+    );
+    return response.data;
+  } catch (error) {
+    console.error('로그아웃 실패:', error); // 자세한 오류 로깅
+    throw new Error(`로그아웃 실패: ${error.message || '알 수 없는 오류'}`);
+  }
 };

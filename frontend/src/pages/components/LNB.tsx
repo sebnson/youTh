@@ -1,8 +1,9 @@
-import { Heart, House, UserRound, Plus } from 'lucide-react';
+import { Heart, House, UserRound, Plus, Power } from 'lucide-react';
 import { useState } from 'react';
 import iconImage from '../../assets/icon.svg';
 import PostModal from '@/pages/components/PostModal';
 import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '@/api/LoginApi';
 
 const LNB = () => {
   const navigate = useNavigate();
@@ -14,6 +15,15 @@ const LNB = () => {
 
   const goToMyFeed = () => {
     navigate('/myFeed');
+  };
+
+  const handleLogout = async ({ id }: { id: number }) => {
+    const result = await logoutUser({ id });
+    if (result.status === 200) {
+      alert('삭제 성공');
+    } else {
+      alert('삭제 실패');
+    }
   };
 
   return (
@@ -48,6 +58,12 @@ const LNB = () => {
             onClick={goToMyFeed}
           >
             <UserRound size={24} />
+          </div>
+          <div
+            className="flex items-center justify-center cursor-pointer hover:bg-[#F1F1F1] hover:rounded-2xl w-16 h-16 text-[#B8B8B8] hover:text-[#111111] nav-footer-rounded"
+            onClick={() => handleLogout({ id: 1 })}
+          >
+            <Power size={24} />
           </div>
         </div>
       </nav>

@@ -10,7 +10,7 @@ import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import defaultProfile from '../../assets/defaultProfile.svg';
 import { useUserStore } from '../../store/userStore';
 import { ContentItem } from '@/types/content';
-import { getPostDetail, updatePost } from 'api/PostApi';
+import { getPostDetail, updatePost } from '@/api/PostApi';
 interface EditModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
