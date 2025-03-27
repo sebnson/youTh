@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useUserStore } from '@/store/userStore';
 
-// const API_BASE_URL = 'http://172.16.200.108:8080/api';
-const API_BASE_URL = import.meta.env.API_BASE_URL;
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://172.16.200.108:8080/api';
 
 interface LoginRequest {
   email: string;

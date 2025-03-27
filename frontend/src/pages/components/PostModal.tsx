@@ -9,7 +9,7 @@ import { Image, X } from 'lucide-react';
 import { useState, useRef, ChangeEvent } from 'react';
 import defaultProfile from '../../assets/defaultProfile.svg';
 import { useUserStore } from '../../store/userStore';
-import { createPost } from '@/pages/api/PostApi';
+import { createPost } from 'api/PostApi';
 
 interface PostModalProps {
   isOpen: boolean;
@@ -25,9 +25,7 @@ const PostModal: React.FC<PostModalProps> = ({
   const { userId, username, userNickname } = useUserStore();
   const [postContent, setPostContent] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedImageBase64, setSelectedImageBase64] = useState<string | null>(
-    null,
-  );
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,16 +36,11 @@ const PostModal: React.FC<PostModalProps> = ({
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // 이미지 미리보기용 URL 생성
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
 
-      // Convert to Base64 for storage/submission
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setSelectedImageBase64(base64String);
-      };
-      reader.readAsDataURL(file);
+      setSelectedImageFile(file);
       console.log('File selected:', file);
     }
 
@@ -58,7 +51,7 @@ const PostModal: React.FC<PostModalProps> = ({
 
   const handleDeleteImage = () => {
     setSelectedImage(null);
-    setSelectedImageBase64(null);
+    setSelectedImageFile(null);
   };
 
   const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -74,9 +67,9 @@ const PostModal: React.FC<PostModalProps> = ({
 
     try {
       const response = await createPost({
-        userId,
+        user_id: userId,
         content: postContent,
-        image: selectedImageBase64,
+        image: selectedImageFile,
       });
 
       console.log('게시글 작성 성공:', response);
@@ -116,7 +109,7 @@ const PostModal: React.FC<PostModalProps> = ({
   const resetForm = () => {
     setPostContent('');
     setSelectedImage(null);
-    setSelectedImageBase64(null);
+    setSelectedImageFile(null);
   };
 
   const isPostButtonEnabled = postContent.trim().length > 0 && !isSubmitting;

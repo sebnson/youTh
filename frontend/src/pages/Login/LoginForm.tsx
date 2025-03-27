@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { loginUser } from '@/pages/api/LoginApi';
+import { loginUser } from 'api/LoginApi';
 import { useNavigate } from 'react-router-dom';
 
 const loginFormSchema = z.object({
@@ -65,7 +65,7 @@ export default function LoginForm() {
         }),
       );
 
-      // 메인 페이지 또는 이전 페이지로 이동 (라우터가 있다고 가정)
+      // 메인 페이지 이동
       navigate('/');
     } catch (error) {
       // 에러 처리
