@@ -1,8 +1,8 @@
 package com.example.demo.service.board;
 
 import com.example.demo.controller.board.dto.BoardCreateRequestDto;
-import com.example.demo.controller.board.dto.BoardCreateResponseDto;
+import com.example.demo.controller.board.dto.BoardResponseDto;
 
 public interface IBoardService {
-    BoardCreateResponseDto save(BoardCreateRequestDto request);
+    BoardResponseDto save(BoardCreateRequestDto request);
 }
