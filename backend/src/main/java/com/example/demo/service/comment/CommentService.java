@@ -74,6 +74,13 @@ public class CommentService implements ICommentService{
 
   }
 
+  @Override
+  public void deleteById(Integer commentId) {
+    Comment existingComment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException("댓글이 존재하지 않습니다",
+        ExceptionType.COMMENT_NOT_FOUND));
+    commentRepository.deleteById(commentId);
+  }
+
 
 
 }
