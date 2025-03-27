@@ -14,4 +14,6 @@ public interface IBoardService {
     BoardResponseDto updateBoard(Integer id, BoardCreateRequestDto request);
 
     void deleteBoard(Integer id);
+    
+    Integer likeBoard(Integer userId, Integer boardId);
 }
