@@ -8,5 +8,6 @@ public interface ICommentService {
   List<CommentResponseDto> getAllComments(Integer boardId);
   CommentResponseDto createComment(Integer boardId,CommentRequestDto requestDto);
   CommentResponseDto updateComment(Integer commentId,CommentRequestDto requestDto);
+  void deleteById(Integer commentId);
 
 }

@@ -25,14 +25,13 @@ public class CommentController {
     return ResponseEntity.ok(responseDtos);
   }
 
-  // 한 게시물의 한 댓글 쓰기
+
   @PostMapping
   public ResponseEntity<CommentResponseDto> createComment(@PathVariable Integer boardId, @RequestBody CommentRequestDto request) {
     CommentResponseDto responseDto = commentService.createComment(boardId,request);
     return ResponseEntity.ok(responseDto);
   }
 
-  // 한 댓글 수정
   @PatchMapping("/{commentId}")
   public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long boardId, @PathVariable Integer commentId, @RequestBody CommentRequestDto request) {
 
@@ -41,14 +40,10 @@ public class CommentController {
     return ResponseEntity.status(201).body(responseDto);
   }
 
-  // 한 댓글 삭제
   @DeleteMapping("/{commentId}")
-  public ResponseEntity<?> deleteComment(@PathVariable Long boardId, @PathVariable Long commentId) {
-    if (commentId == null) {
-      return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "댓글 삭제 실패"));
-    }
-
-    return ResponseEntity.ok().build();
+  public ResponseEntity<Void> deleteComment(@PathVariable Long boardId, @PathVariable Integer commentId) {
+    commentService.deleteById(commentId);
+    return ResponseEntity.ok().body(null);
   }
 
 }

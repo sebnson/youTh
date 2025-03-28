@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
   List<Comment> findByBoardId(Integer boardId);
   Comment save(Comment entity);
+  void deleteById(Integer commentId);
 
 }
